@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Sistema de Radiografías</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #007bff;
+        }
+        .header h1 {
+            margin: 0;
+            color: #333;
+        }
+        .user-info {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            font-size: 14px;
+        }
+        .user-info span {
+            color: #555;
+        }
+        .btn-logout {
+            background-color: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 13px;
+            transition: background-color 0.3s;
+        }
+        .btn-logout:hover {
+            background-color: #c82333;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .btn-nav {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-nav:hover {
+            background-color: #545b62;
+        }
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        .table-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        .empty-message {
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .alert {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            <h1>👨‍⚕️ Gestión de Pacientes</h1>
+            <div class="user-info">
+                <span>Usuario: <strong><%= user.username %></strong></span>
+                <span>Rol: <strong><%= user.tipo_usuario %></strong></span>
+                <a href="/logout" class="btn-logout">🔐 Cerrar Sesión</a>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <a href="/" class="btn btn-nav">🏠 Volver al Inicio</a>
+            <a href="/pacientes/nuevo" class="btn btn-success">➕ Nuevo Paciente</a>
+            <a href="/importar-exportar" class="btn btn-primary">📊 Importar/Exportar</a>
+        </div>
+
+        <% if (pacientes && pacientes.length > 0) { %>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Edad</th>
+                            <th>Género</th>
+                            <th>Fecha de Registro</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% pacientes.forEach(paciente => { %>
+                        <tr>
+                            <td><%= paciente.id %></td>
+                            <td><%= paciente.nombre %></td>
+                            <td><%= paciente.edad ? paciente.edad + ' años' : 'N/A' %></td>
+                            <td>
+                                <% if (paciente.genero === 'M') { %>
+                                    👨 Masculino
+                                <% } else if (paciente.genero === 'F') { %>
+                                    👩 Femenino
+                                <% } else { %>
+                                    N/A
+                                <% } %>
+                            </td>
+                            <td><%= new Date(paciente.fecha_creacion).toLocaleDateString('es-ES') %></td>
+                            <td>
+                                <a href="/pacientes/<%= paciente.id %>" class="btn btn-primary btn-small">👁️ Ver</a>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="alert alert-info">
+                <strong>ℹ️ Sin pacientes registrados</strong><br>
+                No hay pacientes en el sistema. ¡Comienza agregando uno!
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>

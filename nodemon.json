@@ -1,0 +1,6 @@
+{
+  "watch": ["server.js", "public/", "views/"],
+  "ext": "js,json,ejs,css",
+  "ignore": ["node_modules", "uploads"],
+  "exec": "node server.js"
+}

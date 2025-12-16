@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Sistema de Radiografías</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div id="navbar"></div>
+    
+    <div class="container">
+        <h1>🔍 Búsqueda en Tiempo Real</h1>
+        
+        <div class="search-container">
+            <input type="text" 
+                   id="searchInput" 
+                   class="search-input" 
+                   placeholder="Escribe para buscar pacientes...">
+            <div id="searchResults" class="search-results"></div>
+        </div>
+        
+        <div id="resultsContainer">
+            <h2>Resultados de la búsqueda:</h2>
+            <div id="results" style="min-height: 200px;">
+                <p class="alert alert-info">Escribe al menos 2 caracteres para comenzar la búsqueda</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Cargar navbar
+        fetch('/api/menu')
+            .then(res => res.json())
+            .then(menu => {
+                const navbar = document.getElementById('navbar');
+                let html = '<nav><ul>';
+                menu.forEach(item => {
+                    html += `<li><a href="${item.url}">${item.icon} ${item.nombre}</a></li>`;
+                });
+                html += '</ul></nav>';
+                navbar.innerHTML = html;
+            });
+        
+        // Búsqueda en tiempo real
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const resultsContainer = document.getElementById('results');
+        
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            
+            if (query.length < 2) {
+                searchResults.classList.remove('active');
+                resultsContainer.innerHTML = '<p class="alert alert-info">Escribe al menos 2 caracteres para comenzar la búsqueda</p>';
+                return;
+            }
+            
+            fetch(`/api/buscar/pacientes?q=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(data => {
+                    // Mostrar resultados en dropdown
+                    if (data.length > 0) {
+                        let html = '';
+                        data.forEach(item => {
+                            html += `
+                                <div class="search-result-item" onclick="selectPatient(${item.id}, '${item.nombre}')">
+                                    <strong>${item.nombre}</strong> (${item.edad || 'N/A'} años)
+                                </div>
+                            `;
+                        });
+                        searchResults.innerHTML = html;
+                        searchResults.classList.add('active');
+                    } else {
+                        searchResults.classList.remove('active');
+                    }
+                    
+                    // Mostrar resultados principales
+                    if (data.length > 0) {
+                        let resultsHtml = '<table><thead><tr><th>Nombre</th><th>Edad</th><th>Acciones</th></tr></thead><tbody>';
+                        data.forEach(item => {
+                            resultsHtml += `
+                                <tr>
+                                    <td>${item.nombre}</td>
+                                    <td>${item.edad || 'N/A'}</td>
+                                    <td><a href="/pacientes/${item.id}" class="btn btn-primary btn-small">Ver Detalles</a></td>
+                                </tr>
+                            `;
+                        });
+                        resultsHtml += '</tbody></table>';
+                        resultsContainer.innerHTML = resultsHtml;
+                    } else {
+                        resultsContainer.innerHTML = '<p class="alert alert-warning">No se encontraron pacientes con ese nombre</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en búsqueda:', error);
+                    resultsContainer.innerHTML = '<p class="alert alert-error">Error en la búsqueda</p>';
+                });
+        });
+        
+        // Ocultar resultados al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            if (!searchResults.contains(e.target) && e.target !== searchInput) {
+                searchResults.classList.remove('active');
+            }
+        });
+        
+        function selectPatient(id, nombre) {
+            searchInput.value = nombre;
+            searchResults.classList.remove('active');
+            window.location.href = `/pacientes/${id}`;
+        }
+    </script>
+</body>
+</html>

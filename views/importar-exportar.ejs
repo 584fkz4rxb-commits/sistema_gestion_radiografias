@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Sistema de Radiografías</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div id="navbar"></div>
+    
+    <div class="container">
+        <h1>📊 Importar y Exportar Datos</h1>
+        
+        <div class="stats-grid">
+            <div class="form-container">
+                <h2>📥 Importar desde Excel</h2>
+                <p>Sube un archivo Excel con las columnas: nombre, edad, genero</p>
+                
+                <form action="/importar/pacientes" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="archivo">Seleccionar archivo (.xlsx, .xls):</label>
+                        <input type="file" id="archivo" name="archivo" class="form-control" accept=".xlsx,.xls" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success btn-block">
+                        📤 Subir e Importar
+                    </button>
+                </form>
+                
+                <div class="alert alert-info">
+                    <strong>Formato requerido:</strong><br>
+                    - Columna A: nombre (texto)<br>
+                    - Columna B: edad (número)<br>
+                    - Columna C: genero (M/F)
+                </div>
+            </div>
+            
+            <div class="form-container">
+                <h2>📤 Exportar a Excel</h2>
+                <p>Descarga todos los pacientes en formato Excel</p>
+                
+                <a href="/exportar/pacientes" class="btn btn-primary btn-block" style="text-align: center;">
+                    ⬇️ Descargar Archivo Excel
+                </a>
+                
+                <div class="alert alert-info">
+                    <strong>Características:</strong><br>
+                    - Formato .xlsx compatible con Excel<br>
+                    - Incluye todos los campos de pacientes<br>
+                    - Fecha de exportación automática
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        fetch('/api/menu')
+            .then(res => res.json())
+            .then(menu => {
+                const navbar = document.getElementById('navbar');
+                let html = '<nav><ul>';
+                menu.forEach(item => {
+                    html += `<li><a href="${item.url}">${item.icon} ${item.nombre}</a></li>`;
+                });
+                html += '</ul></nav>';
+                navbar.innerHTML = html;
+            });
+    </script>
+</body>
+</html>

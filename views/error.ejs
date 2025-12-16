@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Sistema de Radiografías</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="error-container">
+        <h1>⚠️ <%= title %></h1>
+        <div class="error-message">
+            <p><%= message %></p>
+        </div>
+        
+        <% if (user) { %>
+            <div class="user-info">
+                <p>Usuario: <strong><%= user.username %></strong></p>
+                <p>Rol: <strong><%= user.tipo_usuario %></strong></p>
+            </div>
+        <% } %>
+        
+        <div class="actions">
+            <a href="/" class="btn btn-primary">🏠 Volver al Inicio</a>
+            <a href="/login" class="btn btn-secondary">🔐 Iniciar Sesión</a>
+        </div>
+    </div>
+</body>
+</html>

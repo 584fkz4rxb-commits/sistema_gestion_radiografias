@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    .page-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #007bff;
+    }
+    .header h1 {
+      margin: 0;
+      color: #333;
+    }
+    .user-info {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      font-size: 14px;
+    }
+    .user-info span {
+      color: #555;
+    }
+    .btn-logout {
+      background-color: #dc3545;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 13px;
+      transition: background-color 0.3s;
+    }
+    .btn-logout:hover {
+      background-color: #c82333;
+    }
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+    .btn-nav {
+      background-color: #6c757d;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+    .btn-nav:hover {
+      background-color: #545b62;
+    }
+    .btn-crear {
+      background-color: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+    .btn-crear:hover {
+      background-color: #218838;
+    }
+    .form-container {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      border-left: 4px solid #28a745;
+    }
+    .form-group {
+      margin-bottom: 15px;
+      display: flex;
+      gap: 10px;
+    }
+    .form-group input,
+    .form-group select {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    }
+    .table-container {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: bold;
+    }
+    td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #eee;
+    }
+    tbody tr:hover {
+      background-color: #f8f9fa;
+    }
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .badge-admin {
+      background-color: #dc3545;
+      color: white;
+    }
+    .badge-tecnico {
+      background-color: #007bff;
+      color: white;
+    }
+    .badge-paciente {
+      background-color: #28a745;
+      color: white;
+    }
+    .btn-copy {
+      background-color: #007bff;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background-color 0.3s;
+    }
+    .btn-copy:hover {
+      background-color: #0056b3;
+    }
+    .codigo-usado {
+      background-color: #f0f0f0 !important;
+      color: #999;
+    }
+    .empty-message {
+      padding: 30px;
+      text-align: center;
+      color: #666;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <div class="header">
+      <h1>🔑 Gestión de Códigos de Acceso</h1>
+      <div class="user-info">
+        <span>Usuario: <strong><%= user.username %></strong></span>
+        <span>Rol: <strong><%= user.tipo_usuario %></strong></span>
+        <a href="/logout" class="btn-logout">🔐 Cerrar Sesión</a>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="/" class="btn-nav">🏠 Volver al Inicio</a>
+    </div>
+
+    <div class="form-container">
+      <h2>➕ Crear Nuevo Código</h2>
+      <form method="POST" action="/codigos/nuevo">
+        <div class="form-group">
+          <input type="text" name="codigo" placeholder="Código de acceso (ej: ADMIN001)" required>
+          <select name="tipo_usuario" required>
+            <option value="">Seleccionar tipo...</option>
+            <option value="admin">Admin</option>
+            <option value="tecnico">Técnico</option>
+            <option value="paciente">Paciente</option>
+          </select>
+          <button type="submit" class="btn-crear">✅ Crear Código</button>
+        </div>
+      </form>
+    </div>
+
+    <% if (codigos && codigos.length > 0) { %>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Código</th>
+              <th>Tipo de Usuario</th>
+              <th>Estado</th>
+              <th>Fecha de Creación</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% codigos.forEach(codigo => { %>
+              <tr <% if (codigo.usado) { %>class="codigo-usado"<% } %>>
+                <td><%= codigo.id %></td>
+                <td><strong><%= codigo.codigo %></strong></td>
+                <td>
+                  <span class="badge badge-<%= codigo.tipo_usuario %>">
+                    <% if (codigo.tipo_usuario === 'admin') { %>👨‍💼<% } else if (codigo.tipo_usuario === 'tecnico') { %>🔧<% } else { %>👤<% } %>
+                    <%= codigo.tipo_usuario.charAt(0).toUpperCase() + codigo.tipo_usuario.slice(1) %>
+                  </span>
+                </td>
+                <td>
+                  <% if (codigo.usado) { %>
+                    ✅ Usado
+                  <% } else { %>
+                    ❌ No usado
+                  <% } %>
+                </td>
+                <td><%= new Date(codigo.fecha_creacion).toLocaleDateString('es-ES') %></td>
+                <td>
+                  <button class="btn-copy" onclick="copiarAlPortapapeles('<%= codigo.codigo %>')">📋 Copiar</button>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="empty-message">
+        <p>No hay códigos de acceso registrados. ¡Crea uno para comenzar!</p>
+      </div>
+    <% } %>
+  </div>
+
+  <script>
+    function copiarAlPortapapeles(texto) {
+      navigator.clipboard.writeText(texto).then(() => {
+        alert('✅ Código copiado al portapapeles: ' + texto);
+      }).catch(() => {
+        alert('❌ Error al copiar');
+      });
+    }
+  </script>
+</body>
+</html>

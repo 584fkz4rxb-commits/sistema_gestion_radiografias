@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    .page-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #007bff;
+    }
+    .header h1 {
+      margin: 0;
+      color: #333;
+    }
+    .user-info {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      font-size: 14px;
+    }
+    .user-info span {
+      color: #555;
+    }
+    .btn-logout {
+      background-color: #dc3545;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 13px;
+      transition: background-color 0.3s;
+    }
+    .btn-logout:hover {
+      background-color: #c82333;
+    }
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+    .btn-nav {
+      background-color: #6c757d;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+    .btn-nav:hover {
+      background-color: #545b62;
+    }
+    .table-container {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: bold;
+    }
+    td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #eee;
+    }
+    tbody tr:hover {
+      background-color: #f8f9fa;
+    }
+    .btn-small {
+      background-color: #dc3545;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background-color 0.3s;
+    }
+    .btn-small:hover {
+      background-color: #c82333;
+    }
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .badge-admin {
+      background-color: #dc3545;
+      color: white;
+    }
+    .badge-tecnico {
+      background-color: #007bff;
+      color: white;
+    }
+    .badge-paciente {
+      background-color: #28a745;
+      color: white;
+    }
+    .empty-message {
+      padding: 30px;
+      text-align: center;
+      color: #666;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <div class="header">
+      <h1>👥 Gestión de Usuarios</h1>
+      <div class="user-info">
+        <span>Usuario: <strong><%= user.username %></strong></span>
+        <span>Rol: <strong><%= user.tipo_usuario %></strong></span>
+        <a href="/logout" class="btn-logout">🔐 Cerrar Sesión</a>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="/" class="btn-nav">🏠 Volver al Inicio</a>
+    </div>
+
+    <% if (usuarios && usuarios.length > 0) { %>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre de Usuario</th>
+              <th>Nombre Completo</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% usuarios.forEach(usuario => { %>
+              <tr>
+                <td><%= usuario.id %></td>
+                <td><%= usuario.username %></td>
+                <td><%= usuario.nombre_completo %></td>
+                <td><%= usuario.email || 'N/A' %></td>
+                <td>
+                  <span class="badge badge-<%= usuario.tipo_usuario %>">
+                    <% if (usuario.tipo_usuario === 'admin') { %>👨‍💼<% } else if (usuario.tipo_usuario === 'tecnico') { %>🔧<% } else { %>👤<% } %>
+                    <%= usuario.tipo_usuario.charAt(0).toUpperCase() + usuario.tipo_usuario.slice(1) %>
+                  </span>
+                </td>
+                <td>
+                  <% if (usuario.id !== user.id) { %>
+                    <form method="POST" action="/eliminar-usuario/<%= usuario.id %>" style="display:inline;">
+                      <button type="submit" class="btn-small" onclick="return confirm('¿Estás seguro de que quieres eliminar a este usuario?')">🗑️ Eliminar</button>
+                    </form>
+                  <% } else { %>
+                    <span style="color: #999; font-size: 12px;">Tu cuenta</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="empty-message">
+        <p>No hay usuarios registrados en el sistema.</p>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>
